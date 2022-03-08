@@ -5,11 +5,19 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.rommansabbir.photostore.base.data.PhotoModel
+import com.rommansabbir.photostore.base.executeBodyOrReturnNull
+import com.rommansabbir.photostore.base.loadWithGlide
+import com.rommansabbir.photostore.base.setVisibility
+import com.rommansabbir.photostore.base.showToast
 import com.rommansabbir.photostore.databinding.ContentItemPhotoBinding
+import dagger.hilt.android.qualifiers.ActivityContext
+import javax.inject.Inject
 
 @SuppressLint("NotifyDataSetChanged")
-class Adapter constructor(private val context: Context) : RecyclerView.Adapter<PhotoViewHolder>() {
-    private val list: MutableList<PhotoModel> = mutableListOf()
+class Adapter @Inject constructor(@ActivityContext val context: Context) :
+    RecyclerView.Adapter<PhotoViewHolder>() {
+    val list: MutableList<PhotoModel> = mutableListOf()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder =
         PhotoViewHolder(
             ContentItemPhotoBinding.inflate(
@@ -35,21 +43,22 @@ class Adapter constructor(private val context: Context) : RecyclerView.Adapter<P
 
 }
 
-
 class PhotoViewHolder(private val binding: ContentItemPhotoBinding, private val adapter: Adapter) :
     RecyclerView.ViewHolder(binding.root) {
     fun bindView(position: Int) {
-        val isSuccessful: Boolean? = executeBodyOrReturnNull {
-            return@executeBodyOrReturnNull true
+        executeBodyOrReturnNull {
+            val model = adapter.list[position]
+            binding.progressBar2.setVisibility(true)
+            binding.imageView.loadWithGlide(model.src?.original ?: "") {
+                executeBodyOrReturnNull {
+                    it?.let {
+                        showToast(adapter.context, it.message.toString())
+                    }
+                    binding.progressBar2.setVisibility(false)
+                }
+
+            }
         }
     }
 }
 
-inline fun <T> executeBodyOrReturnNull(crossinline body: () -> T): T? {
-    return try {
-        body.invoke()
-    } catch (e: Throwable) {
-        e.printStackTrace()
-        null
-    }
-}
