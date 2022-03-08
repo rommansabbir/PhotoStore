@@ -1,5 +1,6 @@
 package com.rommansabbir.photostore.base
 
+import android.app.Activity
 import android.graphics.drawable.Drawable
 import android.view.View
 import android.widget.EditText
@@ -15,6 +16,7 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.rommansabbir.lazyloadingrecyclerview.handlerPostDelayed
 import com.rommansabbir.photostore.R
+import com.stfalcon.imageviewer.StfalconImageViewer
 
 inline fun <T> executeBodyOrReturnNull(crossinline body: () -> T): T? {
     return try {
@@ -29,7 +31,7 @@ fun View.setVisibility(value: Boolean, allowInvisible: Boolean = false) {
     this.visibility = if (value) View.VISIBLE else if (allowInvisible) View.INVISIBLE else View.GONE
 }
 
-fun ImageView.loadWithGlide(url: String, callback: (exception: GlideException?) -> Unit) {
+fun ImageView.loadWithGlide(url: String, callback: (exception: GlideException?) -> Unit = {}) {
     executeBodyOrReturnNull {
         Glide.with(context)
             .load(url)
@@ -112,4 +114,11 @@ inline fun SearchView.doOnQueryTextListener(
     }
     this.setOnQueryTextListener(queryListener)
     return queryListener
+}
+
+
+fun Activity.fullScreenImageView(url: String) {
+    StfalconImageViewer.Builder(this, mutableListOf(url)) { view, _ ->
+        view.loadWithGlide(url) {}
+    }.show()
 }
