@@ -41,6 +41,12 @@ class AutoFitRecyclerView : RecyclerView {
         layoutManager = manager
     }
 
+    fun updateSpanCount(value: Int, detach: () -> Unit) {
+        manager = CustomGridLayoutManager(context, value)
+        layoutManager = manager
+        detach.invoke()
+    }
+
     override fun onMeasure(widthSpec: Int, heightSpec: Int) {
         super.onMeasure(widthSpec, heightSpec)
         if (columnWidth > 0) {

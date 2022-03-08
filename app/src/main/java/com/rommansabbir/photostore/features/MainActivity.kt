@@ -6,10 +6,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import com.rommansabbir.photostore.R
-import com.rommansabbir.photostore.base.*
-import com.rommansabbir.photostore.data.models.PhotoSearchRequestModel
+import com.rommansabbir.photostore.base.customize
+import com.rommansabbir.photostore.base.doAfterTextChanged
+import com.rommansabbir.photostore.base.executeBodyOrReturnNull
 import com.rommansabbir.photostore.base.failure.Failure
 import com.rommansabbir.photostore.base.failure.handleFailure
+import com.rommansabbir.photostore.base.failure.showToast
+import com.rommansabbir.photostore.base.fullScreenImageView
+import com.rommansabbir.photostore.data.models.PhotoSearchRequestModel
 import com.rommansabbir.photostore.databinding.ActivityMainBinding
 import com.rommansabbir.photostore.utils.LazyLoadingRecyclerView
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,6 +44,27 @@ class MainActivity : AppCompatActivity() {
 
         /*Default search*/
         loadImages(true)
+
+        //
+        binding.button.setOnClickListener {
+            if (binding.button.text == 2.toString()) {
+                binding.button.text = 3.toString()
+                updateSpans(3)
+                showToast(this, 3.toString())
+            } else if (binding.button.text == 3.toString()) {
+                binding.button.text = 4.toString()
+                updateSpans(4)
+                showToast(this, 4.toString())
+            } else if (binding.button.text == 4.toString()) {
+                binding.button.text = 2.toString()
+                updateSpans(2)
+                showToast(this, 2.toString())
+            } else {
+                binding.button.text = 3.toString()
+                updateSpans(3)
+                showToast(this, 3.toString())
+            }
+        }
     }
 
     private fun setupBinding() {
@@ -82,6 +107,19 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
+    private fun updateSpans(count: Int) {
+        executeBodyOrReturnNull {
+            binding.recyclerView.updateSpanCount(count) {
+                binding.recyclerView.adapter = null
+                setupAdapter()
+                executeBodyOrReturnNull {
+                    lazyLoadingRecyclerView.removeListener()
+                    lazyLoadingRecyclerView.registerScrollListener(binding.recyclerView, listener)
+                }
+            }
+        }
+    }
+
     private fun getRequestModel(): PhotoSearchRequestModel = PhotoSearchRequestModel(
         currentPage,
         perPage,
@@ -93,6 +131,7 @@ class MainActivity : AppCompatActivity() {
             executeBodyOrReturnNull {
                 if (currentPage > 0) {
                     currentPage++
+                    showToast(this@MainActivity, currentPage.toString())
                     loadImages {
                         if (currentPage > 0) {
                             currentPage--
