@@ -13,6 +13,9 @@ abstract class UseCase<out Type, in Params> where Type : Any {
     operator fun invoke(params: Params, onResult: (Either<Failure, Type>) -> Unit = {}) =
         uiScope.launch { onResult(withContext(Dispatchers.IO) { run(params) }) }
 
+    /*Use clients CoroutineScope instead of UseCase one, so that any operation
+    that is ongoing under the CoroutineScope will be cancelled according to
+    the lifecycle state of Client*/
     operator fun invoke(
         scope: CoroutineScope,
         params: Params,

@@ -3,6 +3,12 @@ package com.rommansabbir.photostore.base.failure
 import android.content.Context
 import android.widget.Toast
 
+/**
+ * Handle app [Failure]s.
+ *
+ * @param context [Context].
+ * @param failure [Failure].
+ */
 fun handleFailure(context: Context, failure: Failure) {
     when (failure) {
         is CanNotConnectToServer -> showToast(context, failure.message)
@@ -13,6 +19,12 @@ fun handleFailure(context: Context, failure: Failure) {
     }
 }
 
+/**
+ * Show a toast.
+ *
+ * @param context [Context].
+ * @param msg Message that will be shown.
+ */
 fun showToast(context: Context, msg: String) {
     Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
 }

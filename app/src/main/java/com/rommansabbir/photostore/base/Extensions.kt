@@ -9,7 +9,6 @@ import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -21,6 +20,14 @@ import com.rommansabbir.photostore.R
 import com.stfalcon.imageviewer.StfalconImageViewer
 import java.util.*
 
+/**
+ * A generic API to execute a given body by handling try catch.
+ * If error occurs during the executing return null instead of crash the application.
+ *
+ * @param body Body to execute.
+ *
+ * @return [T]
+ */
 inline fun <T> executeBodyOrReturnNull(crossinline body: () -> T): T? {
     return try {
         body.invoke()
@@ -34,6 +41,14 @@ fun View.setVisibility(value: Boolean, allowInvisible: Boolean = false) {
     this.visibility = if (value) View.VISIBLE else if (allowInvisible) View.INVISIBLE else View.GONE
 }
 
+/**
+ * Load new image from remote source and post it to the respective [ImageView].
+ * Notify client regarding the [GlideException] or resource loaded thorough the [callback].
+ * Ex: Show a progress bar while the image is url and hide if error occur or resource loaded.
+ *
+ * @param url Image url.
+ * @param callback Callback to get notified about error or success.
+ */
 fun ImageView.loadWithGlide(url: String, callback: (exception: GlideException?) -> Unit = {}) {
     executeBodyOrReturnNull {
         Glide.with(context)
@@ -119,7 +134,11 @@ inline fun SearchView.doOnQueryTextListener(
     return queryListener
 }
 
-
+/**
+ * Show an image from remote source as full screen by using [Glide] and [StfalconImageViewer].
+ *
+ * @param url Image url
+ */
 fun Activity.fullScreenImageView(url: String) {
     StfalconImageViewer.Builder(this, mutableListOf(url)) { view, _ ->
         view.loadWithGlide(url) {}
@@ -129,6 +148,14 @@ fun Activity.fullScreenImageView(url: String) {
 
 var handlerDelayTimer: Timer = Timer()
 
+/**
+ * To execute a repetitive task at once only based on [delay].
+ * All executing during the [delay] will be cancelled and only once will be invoked if the [delay]
+ * is over.
+ *
+ * @param delay Delay.
+ * @param onSuccess Callback to execute clients logic.
+ */
 inline fun handlerPostDelayed(delay: Long, crossinline onSuccess: () -> Unit) {
     handlerDelayTimer.cancel()
     handlerDelayTimer = Timer()
