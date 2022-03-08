@@ -12,7 +12,7 @@ const val SOMETHING_WENT_WRONG = "Something went wrong"
 sealed class Failure
 
 /*Networking Specific*/
-class NetworkConnection(val message: String = NO_INTERNET) : Failure()
+class NetworkConnectionError(val message: String = NO_INTERNET) : Failure()
 class UnauthorizedError(val message: String = NOT_LOGGED_IN) : Failure()
 class CanNotConnectToServer(val message : String = "Can't connect to server."): Failure()
 
