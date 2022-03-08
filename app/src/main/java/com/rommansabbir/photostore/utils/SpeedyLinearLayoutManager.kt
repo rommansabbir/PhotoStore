@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 
+/*Ref: https://github.com/rommansabbir/LazyLoadingRecyclerView*/
 open class SpeedyLinearLayoutManager : GridLayoutManager {
     constructor(context: Context, spanCount: Int) : super(context, spanCount)
     constructor(context: Context, spanCount: Int, orientation: Int, reverseLayout: Boolean) : super(

@@ -4,6 +4,7 @@ import android.widget.AbsListView
 import androidx.recyclerview.widget.RecyclerView
 import com.rommansabbir.photostore.base.handlerPostDelayed
 
+/*Ref: https://github.com/rommansabbir/LazyLoadingRecyclerView*/
 class LazyLoadingRecyclerView private constructor() {
     private var isScrolling = false
     private var currentItems = 0

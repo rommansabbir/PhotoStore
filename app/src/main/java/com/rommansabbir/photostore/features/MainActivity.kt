@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import com.rommansabbir.photostore.Adapter
 import com.rommansabbir.photostore.R
 import com.rommansabbir.photostore.base.*
@@ -11,6 +12,7 @@ import com.rommansabbir.photostore.base.data.PhotoSearchRequestModel
 import com.rommansabbir.photostore.databinding.ActivityMainBinding
 import com.rommansabbir.photostore.utils.LazyLoadingRecyclerView
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -36,7 +38,7 @@ class MainActivity : AppCompatActivity() {
         setupSearchView()
 
         /*Default search*/
-        loadImages()
+        loadImages(true)
     }
 
     private fun setupBinding() {
@@ -48,7 +50,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupAdapter() {
         binding.recyclerView.adapter = adapter
         adapter.itemCallback = { photoModel ->
-            photoModel.src?.original?.let {
+            photoModel.src?.medium?.let {
                 fullScreenImageView(it)
             }
         }
@@ -56,15 +58,20 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupSearchView() {
         binding.searchView.customize()
-        binding.searchView.doAfterTextChanged { searchKeyword = it;loadImages() }
+        binding.searchView.doAfterTextChanged { searchKeyword = it;loadImages(true) }
     }
 
-    private fun loadImages(failure: (Failure) -> Unit = {}) {
+    private fun loadImages(shouldClearOldList: Boolean = false, failure: (Failure) -> Unit = {}) {
         vm.setLoading(true)
         vm.searchPhotos(getRequestModel(),
             {
-                vm.setLoading(false)
-                adapter.submitList(it.photos)
+                executeBodyOrReturnNull {
+                    vm.setLoading(false)
+                    if (shouldClearOldList) adapter.clearDataSet()
+                    lifecycleScope.launch {
+                        adapter.addDataSet(it.photos)
+                    }
+                }
             },
             {
                 vm.setLoading(false)
@@ -82,13 +89,13 @@ class MainActivity : AppCompatActivity() {
 
     private val listener = object : LazyLoadingRecyclerView.Listener {
         override fun loadMore() {
-            if (currentPage > 0) {
-                currentPage++
-                showToast(this@MainActivity, "Current Page ++ : $currentPage")
-                loadImages {
-                    if (currentPage > 0) {
-                        currentPage--
-                        showToast(this@MainActivity, "Current Page -- : $currentPage")
+            executeBodyOrReturnNull {
+                if (currentPage > 0) {
+                    currentPage++
+                    loadImages {
+                        if (currentPage > 0) {
+                            currentPage--
+                        }
                     }
                 }
             }
