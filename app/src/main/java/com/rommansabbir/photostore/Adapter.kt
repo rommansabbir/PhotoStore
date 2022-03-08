@@ -39,6 +39,8 @@ class Adapter @Inject constructor(@ActivityContext val context: Context) :
         this.notifyDataSetChanged()
     }
 
+    internal var itemCallback: (model: PhotoModel) -> Unit = {}
+
     override fun getItemCount(): Int = list.size
 
 }
@@ -56,8 +58,8 @@ class PhotoViewHolder(private val binding: ContentItemPhotoBinding, private val 
                     }
                     binding.progressBar2.setVisibility(false)
                 }
-
             }
+            binding.imageView.setOnClickListener { adapter.itemCallback.invoke(model) }
         }
     }
 }

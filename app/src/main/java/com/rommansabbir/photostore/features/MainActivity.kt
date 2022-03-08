@@ -9,6 +9,7 @@ import com.rommansabbir.photostore.R
 import com.rommansabbir.photostore.base.customize
 import com.rommansabbir.photostore.base.data.PhotoSearchRequestModel
 import com.rommansabbir.photostore.base.doAfterTextChanged
+import com.rommansabbir.photostore.base.fullScreenImageView
 import com.rommansabbir.photostore.base.handleFailure
 import com.rommansabbir.photostore.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,6 +31,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupBinding()
+        setupAdapter()
         setupSearchView()
 
         /*Default search*/
@@ -40,7 +42,15 @@ class MainActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.vm = vm
         binding.lifecycleOwner = this
+    }
+
+    private fun setupAdapter() {
         binding.recyclerView.adapter = adapter
+        adapter.itemCallback = { photoModel ->
+            photoModel.src?.original?.let {
+                fullScreenImageView(it)
+            }
+        }
     }
 
     private fun setupSearchView() {
