@@ -24,7 +24,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/searchView">
 
-            <com.rommansabbir.photostore.AutoFitRecyclerView
+            <com.rommansabbir.photostore.utils.AutoFitRecyclerView
                 android:id="@+id/recycler_view"
                 android:layout_width="0dp"
                 android:layout_height="0dp"

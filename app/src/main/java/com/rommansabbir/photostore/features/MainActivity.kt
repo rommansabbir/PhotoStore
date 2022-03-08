@@ -6,12 +6,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.rommansabbir.photostore.Adapter
 import com.rommansabbir.photostore.R
-import com.rommansabbir.photostore.base.customize
+import com.rommansabbir.photostore.base.*
 import com.rommansabbir.photostore.base.data.PhotoSearchRequestModel
-import com.rommansabbir.photostore.base.doAfterTextChanged
-import com.rommansabbir.photostore.base.fullScreenImageView
-import com.rommansabbir.photostore.base.handleFailure
 import com.rommansabbir.photostore.databinding.ActivityMainBinding
+import com.rommansabbir.photostore.utils.LazyLoadingRecyclerView
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -28,9 +26,12 @@ class MainActivity : AppCompatActivity() {
     private val perPage: Int = 100
     private var searchKeyword: String = ""
 
+    private lateinit var lazyLoadingRecyclerView: LazyLoadingRecyclerView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupBinding()
+        lazyLoadingRecyclerView = LazyLoadingRecyclerView.getInstance()
         setupAdapter()
         setupSearchView()
 
@@ -58,7 +59,7 @@ class MainActivity : AppCompatActivity() {
         binding.searchView.doAfterTextChanged { searchKeyword = it;loadImages() }
     }
 
-    private fun loadImages() {
+    private fun loadImages(failure: (Failure) -> Unit = {}) {
         vm.setLoading(true)
         vm.searchPhotos(getRequestModel(),
             {
@@ -68,6 +69,7 @@ class MainActivity : AppCompatActivity() {
             {
                 vm.setLoading(false)
                 handleFailure(this, it)
+                failure.invoke(it)
             }
         )
     }
@@ -77,5 +79,31 @@ class MainActivity : AppCompatActivity() {
         perPage,
         if (searchKeyword.isEmpty()) "Nature" else searchKeyword
     )
+
+    private val listener = object : LazyLoadingRecyclerView.Listener {
+        override fun loadMore() {
+            if (currentPage > 0) {
+                currentPage++
+                showToast(this@MainActivity, "Current Page ++ : $currentPage")
+                loadImages {
+                    if (currentPage > 0) {
+                        currentPage--
+                        showToast(this@MainActivity, "Current Page -- : $currentPage")
+                    }
+                }
+            }
+        }
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        lazyLoadingRecyclerView.registerScrollListener(binding.recyclerView, listener)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        lazyLoadingRecyclerView.removeListener()
+    }
 
 }

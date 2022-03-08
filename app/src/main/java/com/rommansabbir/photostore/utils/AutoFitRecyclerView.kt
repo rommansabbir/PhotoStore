@@ -1,16 +1,15 @@
-package com.rommansabbir.photostore
+package com.rommansabbir.photostore.utils
 
 import android.R
 import android.content.Context
 import android.content.res.TypedArray
 import android.util.AttributeSet
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlin.math.max
 
 /*Ref: https://github.com/chiuki/android-recyclerview/blob/master/app/src/main/java/com/sqisland/android/recyclerview/AutofitRecyclerView.java*/
 class AutoFitRecyclerView : RecyclerView {
-    private var manager: GridLayoutManager? = null
+    var manager: CustomGridLayoutManager? = null
     private var columnWidth = -1
 
     constructor(context: Context) : super(context) {
@@ -38,7 +37,7 @@ class AutoFitRecyclerView : RecyclerView {
             columnWidth = array.getDimensionPixelSize(0, -1)
             array.recycle()
         }
-        manager = GridLayoutManager(getContext(), 3)
+        manager = CustomGridLayoutManager(getContext(), 3)
         layoutManager = manager
     }
 

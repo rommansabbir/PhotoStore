@@ -2,11 +2,14 @@ package com.rommansabbir.photostore.base
 
 import android.app.Activity
 import android.graphics.drawable.Drawable
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -14,9 +17,9 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import com.rommansabbir.lazyloadingrecyclerview.handlerPostDelayed
 import com.rommansabbir.photostore.R
 import com.stfalcon.imageviewer.StfalconImageViewer
+import java.util.*
 
 inline fun <T> executeBodyOrReturnNull(crossinline body: () -> T): T? {
     return try {
@@ -121,4 +124,19 @@ fun Activity.fullScreenImageView(url: String) {
     StfalconImageViewer.Builder(this, mutableListOf(url)) { view, _ ->
         view.loadWithGlide(url) {}
     }.show()
+}
+
+
+var handlerDelayTimer: Timer = Timer()
+
+inline fun handlerPostDelayed(delay: Long, crossinline onSuccess: () -> Unit) {
+    handlerDelayTimer.cancel()
+    handlerDelayTimer = Timer()
+    handlerDelayTimer.schedule(object : TimerTask() {
+        override fun run() {
+            Handler(Looper.getMainLooper()).post {
+                onSuccess.invoke()
+            }
+        }
+    }, delay)
 }
