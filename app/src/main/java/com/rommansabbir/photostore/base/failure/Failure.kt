@@ -1,4 +1,4 @@
-package com.rommansabbir.photostore.base
+package com.rommansabbir.photostore.base.failure
 
 /**
  * Base Class for handling errors/failures/exceptions.

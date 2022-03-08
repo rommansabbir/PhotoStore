@@ -1,5 +1,7 @@
-package com.rommansabbir.photostore.base
+package com.rommansabbir.photostore.base.usecase
 
+import com.rommansabbir.photostore.base.either.Either
+import com.rommansabbir.photostore.base.failure.Failure
 import kotlinx.coroutines.*
 
 abstract class UseCase<out Type, in Params> where Type : Any {

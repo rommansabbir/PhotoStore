@@ -1,11 +1,11 @@
 package com.rommansabbir.photostore.usecases
 
-import com.rommansabbir.photostore.base.Either
-import com.rommansabbir.photostore.base.Failure
-import com.rommansabbir.photostore.base.UseCase
-import com.rommansabbir.photostore.base.data.PhotoSearchRequestModel
-import com.rommansabbir.photostore.base.data.PhotoStoreRepository
-import com.rommansabbir.photostore.base.data.PhotoStoreResponseModel
+import com.rommansabbir.photostore.base.either.Either
+import com.rommansabbir.photostore.base.failure.Failure
+import com.rommansabbir.photostore.base.usecase.UseCase
+import com.rommansabbir.photostore.data.models.PhotoSearchRequestModel
+import com.rommansabbir.photostore.data.repo.PhotoStoreRepository
+import com.rommansabbir.photostore.data.models.PhotoStoreResponseModel
 import kotlinx.coroutines.CoroutineScope
 import javax.inject.Inject
 

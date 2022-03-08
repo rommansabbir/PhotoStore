@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rommansabbir.photostore.base.Failure
-import com.rommansabbir.photostore.base.data.PhotoSearchRequestModel
-import com.rommansabbir.photostore.base.data.PhotoStoreResponseModel
+import com.rommansabbir.photostore.base.failure.Failure
+import com.rommansabbir.photostore.data.models.PhotoSearchRequestModel
+import com.rommansabbir.photostore.data.models.PhotoStoreResponseModel
 import com.rommansabbir.photostore.usecases.SearchPhotosUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

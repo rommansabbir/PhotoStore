@@ -5,10 +5,11 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
-import com.rommansabbir.photostore.Adapter
 import com.rommansabbir.photostore.R
 import com.rommansabbir.photostore.base.*
-import com.rommansabbir.photostore.base.data.PhotoSearchRequestModel
+import com.rommansabbir.photostore.data.models.PhotoSearchRequestModel
+import com.rommansabbir.photostore.base.failure.Failure
+import com.rommansabbir.photostore.base.failure.handleFailure
 import com.rommansabbir.photostore.databinding.ActivityMainBinding
 import com.rommansabbir.photostore.utils.LazyLoadingRecyclerView
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,7 +23,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     @Inject
-    lateinit var adapter: Adapter
+    lateinit var photoAdapter: PhotoAdapter
 
     private var currentPage: Int = 1
     private val perPage: Int = 100
@@ -48,8 +49,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupAdapter() {
-        binding.recyclerView.adapter = adapter
-        adapter.itemCallback = { photoModel ->
+        binding.recyclerView.adapter = photoAdapter
+        photoAdapter.itemCallback = { photoModel ->
             photoModel.src?.medium?.let {
                 fullScreenImageView(it)
             }
@@ -67,9 +68,9 @@ class MainActivity : AppCompatActivity() {
             {
                 executeBodyOrReturnNull {
                     vm.setLoading(false)
-                    if (shouldClearOldList) adapter.clearDataSet()
+                    if (shouldClearOldList) photoAdapter.clearDataSet()
                     lifecycleScope.launch {
-                        adapter.addDataSet(it.photos)
+                        photoAdapter.addDataSet(it.photos)
                     }
                 }
             },
