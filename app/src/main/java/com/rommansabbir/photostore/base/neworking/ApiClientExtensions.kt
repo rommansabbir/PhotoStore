@@ -1,7 +1,11 @@
 package com.rommansabbir.photostore.base.neworking
 
 import android.content.Context
-import com.rommansabbir.photostore.base.*
+import com.rommansabbir.photostore.base.either.Either
+import com.rommansabbir.photostore.base.failure.CanNotConnectToServer
+import com.rommansabbir.photostore.base.failure.ExceptionF
+import com.rommansabbir.photostore.base.failure.Failure
+import com.rommansabbir.photostore.base.failure.UnauthorizedError
 import retrofit2.Call
 
 /**
@@ -34,7 +38,6 @@ fun <T, R> executeAPIRequest(
             }
             false -> Either.Left(
                 getFailureTypeAccordingToHTTPCode(
-                    context,
                     response.code()
                 )
             )
@@ -48,12 +51,11 @@ fun <T, R> executeAPIRequest(
 /**
  * Return a new [Failure] according to the HTTP code.
  *
- * @param context [Context].
  * @param httpCode http code.
  *
  * @return [Failure].
  */
-internal fun getFailureTypeAccordingToHTTPCode(context: Context, httpCode: Int): Failure {
+internal fun getFailureTypeAccordingToHTTPCode(httpCode: Int): Failure {
     return when (httpCode) {
         401 -> return UnauthorizedError()
         in 402..409 -> return CanNotConnectToServer()

@@ -1,20 +1,9 @@
-package com.rommansabbir.photostore.base.data
+package com.rommansabbir.photostore.data.api
 
+import com.rommansabbir.photostore.data.models.PhotoStoreResponseModel
 import retrofit2.Call
 import retrofit2.Retrofit
-import retrofit2.http.*
 import javax.inject.Inject
-
-interface PhotoStoreEndpoints {
-    @Headers("Content-Type: application/json")
-    @GET("/v1/search")
-    fun searchPhotos(
-        @Header("Authorization") header: String,
-        @Query("page") page: Int,
-        @Query("query") query: String,
-        @Query("per_page") perPage: Int,
-    ): Call<PhotoStoreResponseModel>
-}
 
 class PhotoStoreService @Inject constructor(private val retrofit: Retrofit) : PhotoStoreEndpoints {
     private val photoStore: PhotoStoreEndpoints by lazy { retrofit.create(PhotoStoreEndpoints::class.java) }

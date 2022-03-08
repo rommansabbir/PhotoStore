@@ -1,22 +1,16 @@
-package com.rommansabbir.photostore.base.data
+package com.rommansabbir.photostore.data.repo
 
 import android.content.Context
 import com.rommansabbir.photostore.BuildConfig
-import com.rommansabbir.photostore.base.Either
-import com.rommansabbir.photostore.base.Failure
-import com.rommansabbir.photostore.base.NetworkConnectionError
+import com.rommansabbir.photostore.base.either.Either
+import com.rommansabbir.photostore.data.api.PhotoStoreService
+import com.rommansabbir.photostore.data.models.PhotoStoreResponseModel
+import com.rommansabbir.photostore.base.failure.Failure
+import com.rommansabbir.photostore.base.failure.NetworkConnectionError
 import com.rommansabbir.photostore.base.neworking.executeAPIRequest
 import com.rommansabbir.photostore.base.neworking.isInternetConnected
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
-
-interface PhotoStoreRepository {
-    fun searchPhotos(
-        page: Int,
-        query: String,
-        perPage: Int
-    ): Either<Failure, PhotoStoreResponseModel>
-}
 
 class PhotoStoreRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context,

@@ -1,4 +1,4 @@
-package com.rommansabbir.photostore.base.data
+package com.rommansabbir.photostore.data.models
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName

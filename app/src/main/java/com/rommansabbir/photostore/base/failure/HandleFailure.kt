@@ -1,4 +1,4 @@
-package com.rommansabbir.photostore.base
+package com.rommansabbir.photostore.base.failure
 
 import android.content.Context
 import android.widget.Toast

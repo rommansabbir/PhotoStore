@@ -1,4 +1,4 @@
-package com.rommansabbir.photostore.base
+package com.rommansabbir.photostore.base.either
 
 /**
  * Represents a value of one of two possible types (a disjoint union).

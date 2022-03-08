@@ -1,4 +1,4 @@
-package com.rommansabbir.photostore
+package com.rommansabbir.photostore.features
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -7,10 +7,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.rommansabbir.photostore.base.data.PhotoModel
 import com.rommansabbir.photostore.base.executeBodyOrReturnNull
 import com.rommansabbir.photostore.base.loadWithGlide
 import com.rommansabbir.photostore.base.setVisibility
+import com.rommansabbir.photostore.data.models.PhotoModel
 import com.rommansabbir.photostore.databinding.ContentItemPhotoBinding
 import dagger.hilt.android.qualifiers.ActivityContext
 import kotlinx.coroutines.CoroutineScope
@@ -20,7 +20,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @SuppressLint("NotifyDataSetChanged")
-class Adapter @Inject constructor(@ActivityContext val context: Context) :
+class PhotoAdapter @Inject constructor(@ActivityContext val context: Context) :
     RecyclerView.Adapter<PhotoViewHolder>() {
     private val diffUtilsCallBack = object : DiffUtil.ItemCallback<PhotoModel>() {
         override fun areItemsTheSame(oldItem: PhotoModel, newItem: PhotoModel): Boolean {
@@ -77,18 +77,21 @@ class Adapter @Inject constructor(@ActivityContext val context: Context) :
     }
 }
 
-class PhotoViewHolder(private val binding: ContentItemPhotoBinding, private val adapter: Adapter) :
+class PhotoViewHolder(
+    private val binding: ContentItemPhotoBinding,
+    private val photoAdapter: PhotoAdapter
+) :
     RecyclerView.ViewHolder(binding.root) {
     fun bindView(position: Int) {
         executeBodyOrReturnNull {
-            val model = adapter.collectDataSet()[position]
+            val model = photoAdapter.collectDataSet()[position]
             binding.progressBar2.setVisibility(true)
             binding.imageView.loadWithGlide(model.src?.medium ?: "") {
                 executeBodyOrReturnNull {
                     binding.progressBar2.setVisibility(false)
                 }
             }
-            binding.imageView.setOnClickListener { adapter.itemCallback.invoke(model) }
+            binding.imageView.setOnClickListener { photoAdapter.itemCallback.invoke(model) }
         }
     }
 }
