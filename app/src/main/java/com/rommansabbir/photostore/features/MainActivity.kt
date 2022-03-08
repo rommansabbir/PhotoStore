@@ -10,8 +10,6 @@ import com.rommansabbir.photostore.base.customize
 import com.rommansabbir.photostore.base.doAfterTextChanged
 import com.rommansabbir.photostore.base.executeBodyOrReturnNull
 import com.rommansabbir.photostore.base.failure.Failure
-import com.rommansabbir.photostore.base.failure.handleFailure
-import com.rommansabbir.photostore.base.failure.showToast
 import com.rommansabbir.photostore.base.fullScreenImageView
 import com.rommansabbir.photostore.data.models.PhotoSearchRequestModel
 import com.rommansabbir.photostore.databinding.ActivityMainBinding
@@ -47,22 +45,23 @@ class MainActivity : AppCompatActivity() {
 
         //
         binding.button.setOnClickListener {
-            if (binding.button.text == 2.toString()) {
-                binding.button.text = 3.toString()
-                updateSpans(3)
-                showToast(this, 3.toString())
-            } else if (binding.button.text == 3.toString()) {
-                binding.button.text = 4.toString()
-                updateSpans(4)
-                showToast(this, 4.toString())
-            } else if (binding.button.text == 4.toString()) {
-                binding.button.text = 2.toString()
-                updateSpans(2)
-                showToast(this, 2.toString())
-            } else {
-                binding.button.text = 3.toString()
-                updateSpans(3)
-                showToast(this, 3.toString())
+            when (binding.button.text) {
+                2.toString() -> {
+                    binding.button.text = 3.toString()
+                    updateSpans(3)
+                }
+                3.toString() -> {
+                    binding.button.text = 4.toString()
+                    updateSpans(4)
+                }
+                4.toString() -> {
+                    binding.button.text = 2.toString()
+                    updateSpans(2)
+                }
+                else -> {
+                    binding.button.text = 3.toString()
+                    updateSpans(3)
+                }
             }
         }
     }
@@ -101,7 +100,6 @@ class MainActivity : AppCompatActivity() {
             },
             {
                 vm.setLoading(false)
-                handleFailure(this, it)
                 failure.invoke(it)
             }
         )
@@ -131,7 +129,6 @@ class MainActivity : AppCompatActivity() {
             executeBodyOrReturnNull {
                 if (currentPage > 0) {
                     currentPage++
-                    showToast(this@MainActivity, currentPage.toString())
                     loadImages {
                         if (currentPage > 0) {
                             currentPage--
