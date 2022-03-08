@@ -43,8 +43,8 @@ class MainActivity : AppCompatActivity() {
         /*Default search*/
         loadImages(true)
 
-        //
         binding.button.setOnClickListener {
+            /*Update grid view counts*/
             when (binding.button.text) {
                 2.toString() -> {
                     binding.button.text = 3.toString()
@@ -72,6 +72,10 @@ class MainActivity : AppCompatActivity() {
         binding.lifecycleOwner = this
     }
 
+    /**
+     * Set a new adapter instance to the respective recycler view.
+     * Attach a new item callback to show the selected item in full screen.
+     */
     private fun setupAdapter() {
         binding.recyclerView.adapter = photoAdapter
         photoAdapter.itemCallback = { photoModel ->
@@ -83,9 +87,22 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupSearchView() {
         binding.searchView.customize()
-        binding.searchView.doAfterTextChanged { searchKeyword = it;loadImages(true) }
+        binding.searchView.doAfterTextChanged {
+            /*Store the searchKeyword*/
+            searchKeyword = it
+            /*Load new images according to searchKeyword and reset the adapter before submitting
+            the search result*/
+            loadImages(true)
+        }
     }
 
+    /**
+     * Load new images from the Remote Data Source.
+     * Pass the [PhotoSearchRequestModel], get notified on either success or error callback.
+     *
+     * @param shouldClearOldList If need to clear the list, ex: fresh load or show search result.
+     * @param failure Error callback.
+     */
     private fun loadImages(shouldClearOldList: Boolean = false, failure: (Failure) -> Unit = {}) {
         vm.setLoading(true)
         vm.searchPhotos(getRequestModel(),
@@ -105,12 +122,19 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
+    /**
+     * Update current recycler view span count.
+     *
+     * @param count New value
+     */
     private fun updateSpans(count: Int) {
         executeBodyOrReturnNull {
             binding.recyclerView.updateSpanCount(count) {
+                /*Release the current adapter*/
                 binding.recyclerView.adapter = null
                 setupAdapter()
                 executeBodyOrReturnNull {
+                    /*First remove and then attach the infinite scrolling listener*/
                     lazyLoadingRecyclerView.removeListener()
                     lazyLoadingRecyclerView.registerScrollListener(binding.recyclerView, listener)
                 }
@@ -118,6 +142,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Generate new [PhotoSearchRequestModel].
+     * If [searchKeyword] is empty, default [searchKeyword] is "Nature".
+     *
+     * @return [PhotoSearchRequestModel]
+     */
     private fun getRequestModel(): PhotoSearchRequestModel = PhotoSearchRequestModel(
         currentPage,
         perPage,
@@ -127,6 +157,8 @@ class MainActivity : AppCompatActivity() {
     private val listener = object : LazyLoadingRecyclerView.Listener {
         override fun loadMore() {
             executeBodyOrReturnNull {
+                /*Check for pagination, if valid load new photos,
+                if failure occur downgrade pagination too*/
                 if (currentPage > 0) {
                     currentPage++
                     loadImages {
@@ -142,11 +174,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        /*Register listener for infinite scrolling*/
         lazyLoadingRecyclerView.registerScrollListener(binding.recyclerView, listener)
     }
 
     override fun onStop() {
         super.onStop()
+        /*Remove infinite scrolling listener*/
         lazyLoadingRecyclerView.removeListener()
     }
 

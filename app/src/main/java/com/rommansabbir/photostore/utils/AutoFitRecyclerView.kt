@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.res.TypedArray
 import android.util.AttributeSet
 import androidx.recyclerview.widget.RecyclerView
+import com.rommansabbir.photostore.base.executeBodyOrReturnNull
 import kotlin.math.max
 
 /*Ref: https://github.com/chiuki/android-recyclerview/blob/master/app/src/main/java/com/sqisland/android/recyclerview/AutofitRecyclerView.java*/
@@ -37,14 +38,25 @@ class AutoFitRecyclerView : RecyclerView {
             columnWidth = array.getDimensionPixelSize(0, -1)
             array.recycle()
         }
-        manager = CustomGridLayoutManager(getContext(), 3)
+        manager = CustomGridLayoutManager(getContext(), 3 /*Default*/)
         layoutManager = manager
     }
 
+    /**
+     * Update layout manager span count.
+     * Set a new instance of [CustomGridLayoutManager] to the [AutoFitRecyclerView].
+     * Notify client with the [detach] callback to detach the current adapter
+     * and a set a new instance.
+     *
+     * @param value Span count.
+     * @param detach Callback to detach the adapter.
+     */
     fun updateSpanCount(value: Int, detach: () -> Unit) {
-        manager = CustomGridLayoutManager(context, value)
-        layoutManager = manager
-        detach.invoke()
+        executeBodyOrReturnNull {
+            manager = CustomGridLayoutManager(context, value)
+            layoutManager = manager
+            detach.invoke()
+        }
     }
 
     override fun onMeasure(widthSpec: Int, heightSpec: Int) {
