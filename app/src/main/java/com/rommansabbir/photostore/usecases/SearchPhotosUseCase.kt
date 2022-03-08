@@ -4,8 +4,8 @@ import com.rommansabbir.photostore.base.either.Either
 import com.rommansabbir.photostore.base.failure.Failure
 import com.rommansabbir.photostore.base.usecase.UseCase
 import com.rommansabbir.photostore.data.models.PhotoSearchRequestModel
-import com.rommansabbir.photostore.data.repo.PhotoStoreRepository
 import com.rommansabbir.photostore.data.models.PhotoStoreResponseModel
+import com.rommansabbir.photostore.data.repo.PhotoStoreRepository
 import kotlinx.coroutines.CoroutineScope
 import javax.inject.Inject
 
